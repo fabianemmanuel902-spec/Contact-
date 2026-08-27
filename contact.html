@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Emmanuel Contact</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 420px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        h2 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+        .info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        .label {
+            color: #666;
+            font-weight: 500;
+        }
+        .value {
+            color: #222;
+            font-weight: 600;
+        }
+        button, .btn {
+            width: 100%;
+            padding: 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: block;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+        button:hover, .btn:hover {
+            background: #218838;
+        }
+        button:active, .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Save Contact</h2>
+        <p class="subtitle">Tap the button below</p>
+
+        <div class="info">
+            <div class="info-row">
+                <span class="label">Name</span>
+                <span class="value">Emmanuel</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Phone</span>
+                <span class="value">8158331002</span>
+            </div>
+        </div>
+
+        <!-- Main button: Opens Android Add Contact screen -->
+        <a id="addContactBtn" class="btn" href="#">
+            Save to Contacts
+        </a>
+
+        <!-- Backup button: Download vCard -->
+        <button class="btn btn-secondary" onclick="downloadVCard()">
+            Download Contact File
+        </button>
+
+        <div class="note">
+            <strong>On Android:</strong> The green button opens the Add Contact screen with name & number already filled. Just press Save.<br><br>
+            If it doesn't work, use the gray button to download the contact file.
+        </div>
+    </div>
+
+    <script>
+        const name = "Emmanuel";
+        const number = "8158331002";
+
+        // Android Intent to open Add Contact screen pre-filled
+        const intentUrl = `intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;S.name=${encodeURIComponent(name)};S.phone=${encodeURIComponent(number)};end`;
+
+        // Set the main button
+        document.getElementById("addContactBtn").href = intentUrl;
+
+        // Fallback: Download vCard
+        function downloadVCard() {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+N:${name};;;
+TEL;TYPE=CELL:${number}
+END:VCARD`;
+
+            const blob = new Blob([vcard], { type: "text/vcard" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "Emmanuel.vcf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Optional: Detect if not Android and show message
+        if (!/Android/i.test(navigator.userAgent)) {
+            document.querySelector(".note").innerHTML = `
+                This phone is not Android.<br>
+                Please use the <strong>Download Contact File</strong> button, then open the file to save the contact.
+            `;
+        }
+    </script>
+</body>
+</html>
